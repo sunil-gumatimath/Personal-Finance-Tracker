@@ -3,6 +3,7 @@ import { ArrowDownLeft, ArrowUpRight } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
+import { usePreferences } from '@/hooks/usePreferences'
 import type { Transaction } from '@/types'
 
 interface RecentTransactionsProps {
@@ -10,12 +11,7 @@ interface RecentTransactionsProps {
 }
 
 export function RecentTransactions({ transactions }: RecentTransactionsProps) {
-    const formatCurrency = (amount: number) => {
-        return new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: 'USD',
-        }).format(amount)
-    }
+    const { formatCurrency } = usePreferences()
 
     if (transactions.length === 0) {
         return (

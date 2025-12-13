@@ -23,6 +23,7 @@ import { Switch } from '@/components/ui/switch'
 import { toast } from 'sonner'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
+import { usePreferences } from '@/hooks/usePreferences'
 import { cn } from '@/lib/utils'
 import type { Account } from '@/types'
 
@@ -42,6 +43,7 @@ const COLORS = [
 
 export function Accounts() {
     const { user } = useAuth()
+    const { formatCurrency } = usePreferences()
     const [loading, setLoading] = useState(true)
     const [accounts, setAccounts] = useState<Account[]>([])
     const [isDialogOpen, setIsDialogOpen] = useState(false)
@@ -82,12 +84,7 @@ export function Accounts() {
         }
     }
 
-    const formatCurrency = (amount: number) => {
-        return new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: 'USD',
-        }).format(amount)
-    }
+    // formatCurrency is now provided by usePreferences hook
 
     const getAccountIcon = (type: string) => {
         const accountType = ACCOUNT_TYPES.find((t) => t.value === type)

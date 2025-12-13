@@ -4,11 +4,13 @@ import { Button } from '@/components/ui/button'
 import { StatCard, RecentTransactions, SpendingChart, BudgetOverview } from '@/components/dashboard'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
+import { usePreferences } from '@/hooks/usePreferences'
 import type { Transaction, DashboardStats, SpendingByCategory, MonthlyTrend } from '@/types'
 import { Link } from 'react-router-dom'
 
 export function Dashboard() {
     const { user } = useAuth()
+    const { formatCurrency } = usePreferences()
     const [loading, setLoading] = useState(true)
     const [stats, setStats] = useState<DashboardStats>({
         totalBalance: 0,
@@ -227,12 +229,7 @@ export function Dashboard() {
         fetchDashboardData()
     }, [user])
 
-    const formatCurrency = (amount: number) => {
-        return new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: 'USD',
-        }).format(amount)
-    }
+    // formatCurrency is now provided by usePreferences hook
 
     if (loading) {
         return (

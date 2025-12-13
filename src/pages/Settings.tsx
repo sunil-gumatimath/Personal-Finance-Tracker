@@ -16,21 +16,16 @@ import {
 } from '@/components/ui/select'
 import { toast } from 'sonner'
 import { useAuth } from '@/contexts/AuthContext'
+import { usePreferences } from '@/hooks/usePreferences'
 import { supabase } from '@/lib/supabase'
 
 export function Settings() {
     const { user, signOut } = useAuth()
+    const { preferences, savePreferences } = usePreferences()
     const [loading, setLoading] = useState(false)
     const [profileData, setProfileData] = useState({
         fullName: user?.user_metadata?.full_name || '',
         email: user?.email || '',
-    })
-    const [preferences, setPreferences] = useState({
-        currency: 'USD',
-        dateFormat: 'MM/dd/yyyy',
-        notifications: true,
-        emailAlerts: true,
-        budgetAlerts: true,
     })
 
     const handleProfileUpdate = async () => {
@@ -148,7 +143,7 @@ export function Settings() {
                                 <Select
                                     value={preferences.currency}
                                     onValueChange={(value) =>
-                                        setPreferences({ ...preferences, currency: value })
+                                        savePreferences({ currency: value })
                                     }
                                 >
                                     <SelectTrigger>
@@ -168,7 +163,7 @@ export function Settings() {
                                 <Select
                                     value={preferences.dateFormat}
                                     onValueChange={(value) =>
-                                        setPreferences({ ...preferences, dateFormat: value })
+                                        savePreferences({ dateFormat: value })
                                     }
                                 >
                                     <SelectTrigger>
@@ -181,7 +176,9 @@ export function Settings() {
                                     </SelectContent>
                                 </Select>
                             </div>
-                            <Button>Save Preferences</Button>
+                            <p className="text-xs text-muted-foreground">
+                                Preferences are saved automatically
+                            </p>
                         </CardContent>
                     </Card>
                 </TabsContent>
@@ -206,7 +203,7 @@ export function Settings() {
                                 <Switch
                                     checked={preferences.notifications}
                                     onCheckedChange={(checked) =>
-                                        setPreferences({ ...preferences, notifications: checked })
+                                        savePreferences({ notifications: checked })
                                     }
                                 />
                             </div>
@@ -221,7 +218,7 @@ export function Settings() {
                                 <Switch
                                     checked={preferences.emailAlerts}
                                     onCheckedChange={(checked) =>
-                                        setPreferences({ ...preferences, emailAlerts: checked })
+                                        savePreferences({ emailAlerts: checked })
                                     }
                                 />
                             </div>
@@ -236,7 +233,7 @@ export function Settings() {
                                 <Switch
                                     checked={preferences.budgetAlerts}
                                     onCheckedChange={(checked) =>
-                                        setPreferences({ ...preferences, budgetAlerts: checked })
+                                        savePreferences({ budgetAlerts: checked })
                                     }
                                 />
                             </div>

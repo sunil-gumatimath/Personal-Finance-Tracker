@@ -28,16 +28,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 if (session?.user) {
                     setUser(session.user)
                     setLoading(false)
-                } else if (import.meta.env.DEV) {
-                    // Try auto-login, fallback to offline mock if it fails
-                    try {
-                        await autoLoginDemoUser()
-                    } catch (e) {
-                        console.warn('Auto-login failed, falling back to offline demo user:', e)
-                        setOfflineDemoUser()
-                    }
-                    setLoading(false)
                 } else {
+                    // Removed auto-login to allow testing of Sign Up / Login pages
+                    // if (import.meta.env.DEV) { ... }
                     setUser(null)
                     setLoading(false)
                 }
@@ -72,44 +65,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             created_at: new Date().toISOString(),
         } as User)
     }
-
-    const autoLoginDemoUser = async () => {
-        const email = 'demo@example.com'
-        const password = 'demo123password'
-
-        try {
-            // Try to sign in
-            const { error: signInError } = await supabase.auth.signInWithPassword({
-                email,
-                password,
-            })
-
-            // If sign in fails (likely user doesn't exist), try to sign up
-            if (signInError) {
-                console.log('Demo user not found, creating...')
-                const { error: signUpError } = await supabase.auth.signUp({
-                    email,
-                    password,
-                    options: {
-                        data: {
-                            full_name: 'Demo User',
-                        },
-                    },
-                })
-
-                if (signUpError) {
-                    console.error('Failed to create demo user:', signUpError)
-                } else {
-                    console.log('Demo user created and logged in')
-                }
-            } else {
-                console.log('Demo user logged in')
-            }
-        } catch (err) {
-            console.error('Auto login error:', err)
-        }
-    }
-
 
 
     const signIn = async (email: string, password: string) => {

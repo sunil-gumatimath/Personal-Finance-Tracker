@@ -1,6 +1,7 @@
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
+import { usePreferences } from '@/hooks/usePreferences'
 import type { SpendingByCategory } from '@/types'
 
 interface BudgetOverviewProps {
@@ -17,6 +18,8 @@ const COLORS = [
 ]
 
 export function BudgetOverview({ spendingByCategory }: BudgetOverviewProps) {
+    const { formatCurrency } = usePreferences()
+
     if (spendingByCategory.length === 0) {
         return (
             <Card>
@@ -64,12 +67,7 @@ export function BudgetOverview({ spendingByCategory }: BudgetOverviewProps) {
                                     ))}
                                 </Pie>
                                 <Tooltip
-                                    formatter={(value: number) =>
-                                        new Intl.NumberFormat('en-US', {
-                                            style: 'currency',
-                                            currency: 'USD',
-                                        }).format(value)
-                                    }
+                                    formatter={(value: number) => formatCurrency(value)}
                                 />
                                 <Legend />
                             </PieChart>

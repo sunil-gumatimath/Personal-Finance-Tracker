@@ -47,11 +47,13 @@ import { Badge } from '@/components/ui/badge'
 import { toast } from 'sonner'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
+import { usePreferences } from '@/hooks/usePreferences'
 import { cn } from '@/lib/utils'
 import type { Transaction, Category, Account } from '@/types'
 
 export function Transactions() {
     const { user } = useAuth()
+    const { formatCurrency } = usePreferences()
     const [loading, setLoading] = useState(true)
     const [transactions, setTransactions] = useState<Transaction[]>([])
     const [categories, setCategories] = useState<Category[]>([])
@@ -115,12 +117,7 @@ export function Transactions() {
         })
     }, [transactions, searchQuery, filterType])
 
-    const formatCurrency = (amount: number) => {
-        return new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: 'USD',
-        }).format(amount)
-    }
+    // formatCurrency is now provided by usePreferences hook
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()

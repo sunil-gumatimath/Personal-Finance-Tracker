@@ -71,7 +71,7 @@ export function Login() {
                                 <Input
                                     id="email"
                                     type="email"
-                                    placeholder="name@example.com"
+                                    placeholder="user@gmail.com"
                                     value={formData.email}
                                     onChange={(e) =>
                                         setFormData({ ...formData, email: e.target.value })

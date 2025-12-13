@@ -2,7 +2,6 @@ import { Outlet } from 'react-router-dom'
 import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar'
 import { AppSidebar } from './AppSidebar'
 import { Header } from './Header'
-import { Toaster } from '@/components/ui/sonner'
 
 export function MainLayout() {
     return (
@@ -16,7 +15,6 @@ export function MainLayout() {
                     </main>
                 </SidebarInset>
             </div>
-            <Toaster />
         </SidebarProvider>
     )
 }

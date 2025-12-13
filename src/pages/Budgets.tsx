@@ -24,11 +24,13 @@ import { Badge } from '@/components/ui/badge'
 import { toast } from 'sonner'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
+import { usePreferences } from '@/hooks/usePreferences'
 import { cn } from '@/lib/utils'
 import type { Budget, Category } from '@/types'
 
 export function Budgets() {
     const { user } = useAuth()
+    const { formatCurrency } = usePreferences()
     const [loading, setLoading] = useState(true)
     const [budgets, setBudgets] = useState<Budget[]>([])
     const [categories, setCategories] = useState<Category[]>([])
@@ -102,12 +104,7 @@ export function Budgets() {
         }
     }
 
-    const formatCurrency = (amount: number) => {
-        return new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: 'USD',
-        }).format(amount)
-    }
+    // formatCurrency is now provided by usePreferences hook
 
     const getProgressColor = (spent: number, budget: number) => {
         const percentage = (spent / budget) * 100
