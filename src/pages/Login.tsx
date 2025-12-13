@@ -56,15 +56,6 @@ export function Login() {
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
-                        {import.meta.env.DEV && (
-                            <div className="mb-4 rounded-md bg-muted p-3 text-sm text-muted-foreground">
-                                <p className="font-semibold text-foreground">Development Credentials:</p>
-                                <div className="mt-1 flex flex-col gap-1">
-                                    <div>Email: <code className="rounded bg-background px-1 py-0.5">demo@example.com</code></div>
-                                    <div>Password: <code className="rounded bg-background px-1 py-0.5">demo123password</code></div>
-                                </div>
-                            </div>
-                        )}
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div className="space-y-2">
                                 <Label htmlFor="email">Email</Label>
