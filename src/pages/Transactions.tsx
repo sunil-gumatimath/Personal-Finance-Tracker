@@ -244,24 +244,27 @@ export function Transactions() {
             {/* Header */}
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Transactions</h1>
-                    <p className="text-muted-foreground">
+                    <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Transactions</h1>
+                    <p className="text-sm sm:text-base text-muted-foreground">
                         Manage and track all your financial transactions
                     </p>
                 </div>
                 <div className="flex gap-2">
-                    <Button variant="outline" onClick={handleExport}>
+                    <Button variant="outline" onClick={handleExport} className="flex-1 sm:flex-none">
                         <Download className="mr-2 h-4 w-4" />
-                        Export CSV
+                        <span className="hidden sm:inline">Export CSV</span>
+                        <span className="sm:hidden">Export</span>
                     </Button>
                     <Button
                         onClick={() => {
                             resetForm()
                             setIsDialogOpen(true)
                         }}
+                        className="flex-1 sm:flex-none"
                     >
                         <Plus className="mr-2 h-4 w-4" />
-                        Add Transaction
+                        <span className="hidden sm:inline">Add Transaction</span>
+                        <span className="sm:hidden">Add</span>
                     </Button>
                 </div>
             </div>
@@ -328,25 +331,18 @@ export function Transactions() {
                             )}
                         </div>
                     ) : (
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead>Type</TableHead>
-                                    <TableHead>Description</TableHead>
-                                    <TableHead>Category</TableHead>
-                                    <TableHead>Account</TableHead>
-                                    <TableHead>Date</TableHead>
-                                    <TableHead className="text-right">Amount</TableHead>
-                                    <TableHead className="w-[50px]"></TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
+                        <>
+                            {/* Mobile Card Layout */}
+                            <div className="block md:hidden space-y-3">
                                 {filteredTransactions.map((transaction) => (
-                                    <TableRow key={transaction.id}>
-                                        <TableCell>
+                                    <div
+                                        key={transaction.id}
+                                        className="flex items-center justify-between rounded-lg border border-border/50 p-3 transition-colors hover:bg-muted/50"
+                                    >
+                                        <div className="flex items-center gap-3 flex-1 min-w-0">
                                             <div
                                                 className={cn(
-                                                    'flex h-8 w-8 items-center justify-center rounded-full',
+                                                    'flex h-10 w-10 shrink-0 items-center justify-center rounded-full',
                                                     transaction.type === 'income'
                                                         ? 'bg-green-500/10 text-green-500'
                                                         : transaction.type === 'expense'
@@ -355,47 +351,39 @@ export function Transactions() {
                                                 )}
                                             >
                                                 {transaction.type === 'income' ? (
-                                                    <ArrowDownLeft className="h-4 w-4" />
+                                                    <ArrowDownLeft className="h-5 w-5" />
                                                 ) : (
-                                                    <ArrowUpRight className="h-4 w-4" />
+                                                    <ArrowUpRight className="h-5 w-5" />
                                                 )}
                                             </div>
-                                        </TableCell>
-                                        <TableCell className="font-medium">
-                                            <div className="flex items-center gap-2">
-                                                {transaction.description || 'No description'}
-                                                {transaction.is_recurring && (
-                                                    <Badge variant="outline" className="gap-1 text-xs">
-                                                        <Repeat className="h-3 w-3" />
-                                                        {transaction.recurring_frequency}
-                                                    </Badge>
-                                                )}
+                                            <div className="flex-1 min-w-0">
+                                                <p className="font-medium truncate">
+                                                    {transaction.description || 'No description'}
+                                                </p>
+                                                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                                    <span>{format(new Date(transaction.date), 'MMM d')}</span>
+                                                    {transaction.category && (
+                                                        <>
+                                                            <span>•</span>
+                                                            <span className="truncate">{transaction.category.name}</span>
+                                                        </>
+                                                    )}
+                                                </div>
                                             </div>
-                                        </TableCell>
-                                        <TableCell>
-                                            {transaction.category ? (
-                                                <Badge variant="secondary">{transaction.category.name}</Badge>
-                                            ) : (
-                                                <span className="text-muted-foreground">—</span>
-                                            )}
-                                        </TableCell>
-                                        <TableCell>{transaction.account?.name || '—'}</TableCell>
-                                        <TableCell>
-                                            {format(new Date(transaction.date), 'MMM d, yyyy')}
-                                        </TableCell>
-                                        <TableCell
-                                            className={cn(
-                                                'text-right font-semibold',
-                                                transaction.type === 'income' ? 'text-green-500' : 'text-red-500'
-                                            )}
-                                        >
-                                            {transaction.type === 'income' ? '+' : '-'}
-                                            {formatCurrency(Math.abs(transaction.amount))}
-                                        </TableCell>
-                                        <TableCell>
+                                        </div>
+                                        <div className="flex items-center gap-2 shrink-0">
+                                            <span
+                                                className={cn(
+                                                    'font-semibold text-sm',
+                                                    transaction.type === 'income' ? 'text-green-500' : 'text-red-500'
+                                                )}
+                                            >
+                                                {transaction.type === 'income' ? '+' : '-'}
+                                                {formatCurrency(Math.abs(transaction.amount))}
+                                            </span>
                                             <DropdownMenu>
                                                 <DropdownMenuTrigger asChild>
-                                                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                                                    <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0">
                                                         <MoreHorizontal className="h-4 w-4" />
                                                     </Button>
                                                 </DropdownMenuTrigger>
@@ -413,11 +401,105 @@ export function Transactions() {
                                                     </DropdownMenuItem>
                                                 </DropdownMenuContent>
                                             </DropdownMenu>
-                                        </TableCell>
-                                    </TableRow>
+                                        </div>
+                                    </div>
                                 ))}
-                            </TableBody>
-                        </Table>
+                            </div>
+
+                            {/* Desktop Table Layout */}
+                            <div className="hidden md:block">
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead>Type</TableHead>
+                                            <TableHead>Description</TableHead>
+                                            <TableHead>Category</TableHead>
+                                            <TableHead>Account</TableHead>
+                                            <TableHead>Date</TableHead>
+                                            <TableHead className="text-right">Amount</TableHead>
+                                            <TableHead className="w-[50px]"></TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {filteredTransactions.map((transaction) => (
+                                            <TableRow key={transaction.id}>
+                                                <TableCell>
+                                                    <div
+                                                        className={cn(
+                                                            'flex h-8 w-8 items-center justify-center rounded-full',
+                                                            transaction.type === 'income'
+                                                                ? 'bg-green-500/10 text-green-500'
+                                                                : transaction.type === 'expense'
+                                                                    ? 'bg-red-500/10 text-red-500'
+                                                                    : 'bg-blue-500/10 text-blue-500'
+                                                        )}
+                                                    >
+                                                        {transaction.type === 'income' ? (
+                                                            <ArrowDownLeft className="h-4 w-4" />
+                                                        ) : (
+                                                            <ArrowUpRight className="h-4 w-4" />
+                                                        )}
+                                                    </div>
+                                                </TableCell>
+                                                <TableCell className="font-medium">
+                                                    <div className="flex items-center gap-2">
+                                                        {transaction.description || 'No description'}
+                                                        {transaction.is_recurring && (
+                                                            <Badge variant="outline" className="gap-1 text-xs">
+                                                                <Repeat className="h-3 w-3" />
+                                                                {transaction.recurring_frequency}
+                                                            </Badge>
+                                                        )}
+                                                    </div>
+                                                </TableCell>
+                                                <TableCell>
+                                                    {transaction.category ? (
+                                                        <Badge variant="secondary">{transaction.category.name}</Badge>
+                                                    ) : (
+                                                        <span className="text-muted-foreground">—</span>
+                                                    )}
+                                                </TableCell>
+                                                <TableCell>{transaction.account?.name || '—'}</TableCell>
+                                                <TableCell>
+                                                    {format(new Date(transaction.date), 'MMM d, yyyy')}
+                                                </TableCell>
+                                                <TableCell
+                                                    className={cn(
+                                                        'text-right font-semibold',
+                                                        transaction.type === 'income' ? 'text-green-500' : 'text-red-500'
+                                                    )}
+                                                >
+                                                    {transaction.type === 'income' ? '+' : '-'}
+                                                    {formatCurrency(Math.abs(transaction.amount))}
+                                                </TableCell>
+                                                <TableCell>
+                                                    <DropdownMenu>
+                                                        <DropdownMenuTrigger asChild>
+                                                            <Button variant="ghost" size="icon" className="h-8 w-8">
+                                                                <MoreHorizontal className="h-4 w-4" />
+                                                            </Button>
+                                                        </DropdownMenuTrigger>
+                                                        <DropdownMenuContent align="end">
+                                                            <DropdownMenuItem onClick={() => handleEdit(transaction)}>
+                                                                <Pencil className="mr-2 h-4 w-4" />
+                                                                Edit
+                                                            </DropdownMenuItem>
+                                                            <DropdownMenuItem
+                                                                className="text-destructive"
+                                                                onClick={() => handleDelete(transaction.id)}
+                                                            >
+                                                                <Trash2 className="mr-2 h-4 w-4" />
+                                                                Delete
+                                                            </DropdownMenuItem>
+                                                        </DropdownMenuContent>
+                                                    </DropdownMenu>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </div>
+                        </>
                     )}
                 </CardContent>
             </Card>

@@ -218,8 +218,8 @@ export function Accounts() {
                                 <Wallet className="h-5 w-5 text-primary-foreground" />
                             </div>
                             <div>
-                                <h1 className="text-3xl font-bold tracking-tight">Accounts</h1>
-                                <p className="text-muted-foreground">
+                                <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Accounts</h1>
+                                <p className="text-sm sm:text-base text-muted-foreground">
                                     Manage your financial accounts in one place
                                 </p>
                             </div>
@@ -249,9 +249,9 @@ export function Accounts() {
             </div>
 
             {/* Financial Overview Cards */}
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
                 {/* Net Worth Card */}
-                <Card className="relative overflow-hidden border-0 bg-gradient-to-br from-slate-900 to-slate-800 text-white shadow-xl col-span-2">
+                <Card className="relative overflow-hidden border-0 bg-gradient-to-br from-slate-900 to-slate-800 text-white shadow-xl sm:col-span-2">
                     <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wMyI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+')] opacity-50" />
                     <div className="absolute -right-20 -top-20 h-60 w-60 rounded-full bg-white/5 blur-3xl" />
                     <div className="absolute -left-20 -bottom-20 h-60 w-60 rounded-full bg-primary/10 blur-3xl" />
@@ -338,7 +338,7 @@ export function Accounts() {
                         <h2 className="text-lg font-semibold">Active Accounts</h2>
                         <span className="text-sm text-muted-foreground">{activeAccounts.length} accounts</span>
                     </div>
-                    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
                         {activeAccounts.map((account) => {
                             const Icon = getAccountIcon(account.type)
                             const gradient = getGradientForColor(account.color)
@@ -439,7 +439,7 @@ export function Accounts() {
                         <h2 className="text-lg font-semibold text-muted-foreground">Inactive Accounts</h2>
                         <span className="text-sm text-muted-foreground">{inactiveAccounts.length} accounts</span>
                     </div>
-                    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
                         {inactiveAccounts.map((account) => {
                             const Icon = getAccountIcon(account.type)
                             return (

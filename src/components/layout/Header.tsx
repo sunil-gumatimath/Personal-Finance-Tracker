@@ -55,9 +55,14 @@ export function Header() {
             <SidebarTrigger className="-ml-1" />
             <Separator orientation="vertical" className="h-6" />
 
-            {/* Breadcrumbs */}
+            {/* Breadcrumbs - Hidden on mobile, simplified on tablet */}
             <div className="flex flex-1 items-center">
-                <nav className="flex items-center gap-1 text-sm text-muted-foreground">
+                {/* Mobile: Show current page title only */}
+                <span className="font-semibold text-foreground sm:hidden">
+                    {currentRoute.breadcrumb}
+                </span>
+                {/* Tablet/Desktop: Show full breadcrumbs */}
+                <nav className="hidden sm:flex items-center gap-1 text-sm text-muted-foreground">
                     <Link
                         to="/"
                         className="hover:text-foreground transition-colors"

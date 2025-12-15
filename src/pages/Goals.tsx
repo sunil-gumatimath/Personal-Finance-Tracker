@@ -247,8 +247,8 @@ export function Goals() {
             {/* Header */}
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Financial Goals</h1>
-                    <p className="text-muted-foreground">
+                    <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Financial Goals</h1>
+                    <p className="text-sm sm:text-base text-muted-foreground">
                         Track your savings goals and celebrate achievements
                     </p>
                 </div>
@@ -257,6 +257,7 @@ export function Goals() {
                         resetForm()
                         setIsDialogOpen(true)
                     }}
+                    className="w-full sm:w-auto"
                 >
                     <Plus className="mr-2 h-4 w-4" />
                     New Goal
@@ -264,7 +265,7 @@ export function Goals() {
             </div>
 
             {/* Stats Cards */}
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
                 <Card>
                     <CardContent className="pt-6">
                         <div className="flex items-center gap-4">
@@ -299,7 +300,7 @@ export function Goals() {
                             </div>
                             <div>
                                 <p className="text-sm text-muted-foreground">Total Saved</p>
-                                <p className="text-2xl font-bold">{formatCurrency(totalSaved)}</p>
+                                <p className="text-xl sm:text-2xl font-bold">{formatCurrency(totalSaved)}</p>
                             </div>
                         </div>
                     </CardContent>
@@ -345,7 +346,7 @@ export function Goals() {
                     </CardContent>
                 </Card>
             ) : (
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
                     {goals.map((goal) => {
                         const GoalIcon = getGoalIcon(goal.icon)
                         const progress = getProgress(goal)

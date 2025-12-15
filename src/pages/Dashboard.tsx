@@ -245,13 +245,13 @@ export function Dashboard() {
             {/* Header with Quick Actions */}
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-                    <p className="text-muted-foreground">
+                    <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Dashboard</h1>
+                    <p className="text-sm sm:text-base text-muted-foreground">
                         Welcome back! Here's your financial overview.
                     </p>
                 </div>
                 <div className="flex gap-2">
-                    <Button asChild>
+                    <Button asChild className="w-full sm:w-auto">
                         <Link to="/transactions?action=new">
                             <Plus className="mr-2 h-4 w-4" />
                             Add Transaction
@@ -261,7 +261,7 @@ export function Dashboard() {
             </div>
 
             {/* Stats Cards */}
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
                 <StatCard
                     title="Total Balance"
                     value={formatCurrency(stats.totalBalance)}
@@ -296,7 +296,7 @@ export function Dashboard() {
             </div>
 
             {/* Charts Row */}
-            <div className="grid gap-6 lg:grid-cols-2">
+            <div className="grid gap-4 lg:gap-6 grid-cols-1 lg:grid-cols-2">
                 <SpendingChart data={monthlyTrends} />
                 <BudgetOverview spendingByCategory={spendingByCategory} />
             </div>

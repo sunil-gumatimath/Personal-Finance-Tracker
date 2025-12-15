@@ -104,8 +104,6 @@ export function Budgets() {
         fetchData()
     }, [fetchData])
 
-    // formatCurrency is now provided by usePreferences hook
-
     const getProgressColor = (spent: number, budget: number) => {
         const percentage = (spent / budget) * 100
         if (percentage >= 100) return 'var(--color-red-500)'
@@ -187,8 +185,8 @@ export function Budgets() {
             {/* Header */}
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Budgets</h1>
-                    <p className="text-muted-foreground">
+                    <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Budgets</h1>
+                    <p className="text-sm sm:text-base text-muted-foreground">
                         Set spending limits and track your progress
                     </p>
                 </div>
@@ -197,6 +195,7 @@ export function Budgets() {
                         resetForm()
                         setIsDialogOpen(true)
                     }}
+                    className="w-full sm:w-auto"
                 >
                     <Plus className="mr-2 h-4 w-4" />
                     Create Budget
@@ -204,7 +203,7 @@ export function Budgets() {
             </div>
 
             {/* Overview Cards */}
-            <div className="grid gap-4 sm:grid-cols-3">
+            <div className="grid gap-4 grid-cols-1 sm:grid-cols-3">
                 <Card>
                     <CardHeader className="pb-2">
                         <CardTitle className="text-sm font-medium text-muted-foreground">
@@ -275,7 +274,7 @@ export function Budgets() {
                     </CardContent>
                 </Card>
             ) : (
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
                     {budgets.map((budget) => {
                         const spent = budget.spent || 0
                         const percentage = Math.min((spent / budget.amount) * 100, 100)

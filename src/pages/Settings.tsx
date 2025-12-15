@@ -105,22 +105,22 @@ export function Settings() {
             </div>
 
             <Tabs defaultValue="profile" className="space-y-6">
-                <TabsList>
-                    <TabsTrigger value="profile" className="gap-2">
+                <TabsList className="flex w-full overflow-x-auto scrollbar-hide gap-1 sm:gap-0 sm:grid sm:grid-cols-4 h-auto p-1">
+                    <TabsTrigger value="profile" className="gap-2 flex-shrink-0 px-3 py-2">
                         <User className="h-4 w-4" />
-                        Profile
+                        <span className="hidden sm:inline">Profile</span>
                     </TabsTrigger>
-                    <TabsTrigger value="preferences" className="gap-2">
+                    <TabsTrigger value="preferences" className="gap-2 flex-shrink-0 px-3 py-2">
                         <Palette className="h-4 w-4" />
-                        Preferences
+                        <span className="hidden sm:inline">Preferences</span>
                     </TabsTrigger>
-                    <TabsTrigger value="notifications" className="gap-2">
+                    <TabsTrigger value="notifications" className="gap-2 flex-shrink-0 px-3 py-2">
                         <Bell className="h-4 w-4" />
-                        Notifications
+                        <span className="hidden sm:inline">Notifications</span>
                     </TabsTrigger>
-                    <TabsTrigger value="security" className="gap-2">
+                    <TabsTrigger value="security" className="gap-2 flex-shrink-0 px-3 py-2">
                         <Shield className="h-4 w-4" />
-                        Security
+                        <span className="hidden sm:inline">Security</span>
                     </TabsTrigger>
                 </TabsList>
 
