@@ -13,7 +13,6 @@ import {
 } from 'date-fns'
 import { ChevronLeft, ChevronRight, ArrowUpRight, ArrowDownLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
 import {
     Dialog,
     DialogContent,
@@ -143,7 +142,7 @@ export function Calendar() {
                 </div>
             </div>
 
-            <Card className="overflow-hidden">
+            <div className="group relative overflow-hidden rounded-xl border border-border/50 bg-card/50 backdrop-blur-sm transition-all duration-300 hover:border-border hover:bg-card/80">
                 <div className="grid grid-cols-7 border-b bg-muted/50 text-center text-xs font-semibold leading-6 text-muted-foreground lg:text-sm">
                     <div className="py-2">Sun</div>
                     <div className="py-2">Mon</div>
@@ -189,7 +188,7 @@ export function Calendar() {
                         </div>
                     ))}
                 </div>
-            </Card>
+            </div>
 
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogContent>

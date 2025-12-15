@@ -14,7 +14,6 @@ import {
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
     Table,
     TableBody,
@@ -268,42 +267,42 @@ export function Transactions() {
             </div>
 
             {/* Filters */}
-            <Card>
-                <CardContent className="pt-6">
-                    <div className="flex flex-col gap-4 sm:flex-row">
-                        <div className="relative flex-1">
-                            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                            <Input
-                                placeholder="Search transactions..."
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                className="pl-10"
-                            />
-                        </div>
-                        <div className="flex gap-2">
-                            <Select value={filterType} onValueChange={setFilterType}>
-                                <SelectTrigger className="w-[140px]">
-                                    <Filter className="mr-2 h-4 w-4" />
-                                    <SelectValue placeholder="Filter" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="all">All Types</SelectItem>
-                                    <SelectItem value="income">Income</SelectItem>
-                                    <SelectItem value="expense">Expense</SelectItem>
-                                    <SelectItem value="transfer">Transfer</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
+            <div className="group relative overflow-hidden rounded-xl border border-border/50 bg-card/50 backdrop-blur-sm p-6 transition-all duration-300 hover:border-border hover:bg-card/80">
+                <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none" />
+                <div className="relative flex flex-col gap-4 sm:flex-row">
+                    <div className="relative flex-1">
+                        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                        <Input
+                            placeholder="Search transactions..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="pl-10"
+                        />
                     </div>
-                </CardContent>
-            </Card>
+                    <div className="flex gap-2">
+                        <Select value={filterType} onValueChange={setFilterType}>
+                            <SelectTrigger className="w-[140px]">
+                                <Filter className="mr-2 h-4 w-4" />
+                                <SelectValue placeholder="Filter" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="all">All Types</SelectItem>
+                                <SelectItem value="income">Income</SelectItem>
+                                <SelectItem value="expense">Expense</SelectItem>
+                                <SelectItem value="transfer">Transfer</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                </div>
+            </div>
 
             {/* Transactions Table */}
-            <Card>
-                <CardHeader>
-                    <CardTitle>All Transactions</CardTitle>
-                </CardHeader>
-                <CardContent>
+            <div className="group relative overflow-hidden rounded-xl border border-border/50 bg-card/50 backdrop-blur-sm transition-all duration-300 hover:border-border hover:bg-card/80">
+                <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none" />
+                <div className="relative p-6 pb-2">
+                    <h3 className="text-base font-semibold">All Transactions</h3>
+                </div>
+                <div className="relative px-6 pb-6">
                     {filteredTransactions.length === 0 ? (
                         <div className="flex flex-col items-center justify-center py-12 text-center">
                             <div className="rounded-full bg-muted p-4">
@@ -499,8 +498,8 @@ export function Transactions() {
                             </div>
                         </>
                     )}
-                </CardContent>
-            </Card>
+                </div>
+            </div>
 
             {/* Add/Edit Dialog */}
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>

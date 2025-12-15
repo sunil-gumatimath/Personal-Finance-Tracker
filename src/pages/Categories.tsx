@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Plus, Tag, Pencil, Trash2, TrendingUp, TrendingDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
     Dialog,
     DialogContent,
@@ -170,14 +169,15 @@ export function Categories() {
 
             <div className="grid gap-6 lg:grid-cols-2">
                 {/* Income Categories */}
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-2">
-                            <TrendingUp className="h-5 w-5 text-green-500" />
-                            Income Categories
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent>
+                <div className="group relative overflow-hidden rounded-xl border border-border/50 bg-card/50 backdrop-blur-sm p-6 transition-all duration-300 hover:border-border hover:bg-card/80">
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none" />
+                    <div className="relative flex items-center gap-2 mb-4">
+                        <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-400">
+                            <TrendingUp className="h-4 w-4" />
+                        </div>
+                        <h3 className="text-base font-semibold">Income Categories</h3>
+                    </div>
+                    <div className="relative">
                         {incomeCategories.length === 0 ? (
                             <div className="py-8 text-center text-sm text-muted-foreground">
                                 No income categories yet
@@ -187,11 +187,11 @@ export function Categories() {
                                 {incomeCategories.map((category) => (
                                     <div
                                         key={category.id}
-                                        className="flex items-center justify-between rounded-lg border border-border/50 p-3 transition-colors hover:bg-muted/50"
+                                        className="flex items-center justify-between rounded-xl border border-border/30 bg-background/30 p-3 transition-all duration-200 hover:bg-background/50 hover:border-border/50"
                                     >
                                         <div className="flex items-center gap-3">
                                             <div
-                                                className="flex h-10 w-10 items-center justify-center rounded-full"
+                                                className="flex h-10 w-10 items-center justify-center rounded-xl"
                                                 style={{ backgroundColor: `${category.color}20` }}
                                             >
                                                 <Tag className="h-5 w-5" style={{ color: category.color }} />
@@ -229,18 +229,20 @@ export function Categories() {
                                 ))}
                             </div>
                         )}
-                    </CardContent>
-                </Card>
+                    </div>
+                    <div className="absolute -right-6 -top-6 h-20 w-20 rounded-full bg-emerald-500 opacity-10 blur-2xl transition-opacity group-hover:opacity-20" />
+                </div>
 
                 {/* Expense Categories */}
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-2">
-                            <TrendingDown className="h-5 w-5 text-red-500" />
-                            Expense Categories
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent>
+                <div className="group relative overflow-hidden rounded-xl border border-border/50 bg-card/50 backdrop-blur-sm p-6 transition-all duration-300 hover:border-border hover:bg-card/80">
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none" />
+                    <div className="relative flex items-center gap-2 mb-4">
+                        <div className="p-2 rounded-xl bg-rose-500/10 text-rose-400">
+                            <TrendingDown className="h-4 w-4" />
+                        </div>
+                        <h3 className="text-base font-semibold">Expense Categories</h3>
+                    </div>
+                    <div className="relative">
                         {expenseCategories.length === 0 ? (
                             <div className="py-8 text-center text-sm text-muted-foreground">
                                 No expense categories yet
@@ -250,11 +252,11 @@ export function Categories() {
                                 {expenseCategories.map((category) => (
                                     <div
                                         key={category.id}
-                                        className="flex items-center justify-between rounded-lg border border-border/50 p-3 transition-colors hover:bg-muted/50"
+                                        className="flex items-center justify-between rounded-xl border border-border/30 bg-background/30 p-3 transition-all duration-200 hover:bg-background/50 hover:border-border/50"
                                     >
                                         <div className="flex items-center gap-3">
                                             <div
-                                                className="flex h-10 w-10 items-center justify-center rounded-full"
+                                                className="flex h-10 w-10 items-center justify-center rounded-xl"
                                                 style={{ backgroundColor: `${category.color}20` }}
                                             >
                                                 <Tag className="h-5 w-5" style={{ color: category.color }} />
@@ -292,8 +294,9 @@ export function Categories() {
                                 ))}
                             </div>
                         )}
-                    </CardContent>
-                </Card>
+                    </div>
+                    <div className="absolute -right-6 -top-6 h-20 w-20 rounded-full bg-rose-500 opacity-10 blur-2xl transition-opacity group-hover:opacity-20" />
+                </div>
             </div>
 
             {/* Add/Edit Dialog */}
