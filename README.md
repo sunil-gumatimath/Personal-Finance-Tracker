@@ -1,87 +1,117 @@
 # Personal Finance Tracker
 
-A modern personal finance management application built with React 19, TypeScript, and Supabase.
+A comprehensive personal finance management application designed to help users track expenses, manage budgets, and achieve financial goals. Built with modern web technologies, this application offers a responsive and intuitive user interface for managing all aspects of personal finance.
 
 ## Features
 
-- Interactive dashboard with real-time financial overview and charts
-- Account management for checking, savings, investment, and credit accounts
-- Transaction tracking with support for income, expenses, and transfers
-- Recurring transaction management
-- Financial calendar with monthly income and expense visualization
-- Budget creation and spending limit tracking
-- Savings goals with progress monitoring
-- Secure authentication powered by Supabase
-- Responsive design with dark mode support
-- Currency support (Default: Rupees ₹, customizable)
-- CSV export functionality for data portability
-- Progressive Web App (PWA) capabilities
-- Docker containerization for production deployment
+- **Dashboard**: Real-time overview of financial health including total balance, monthly income, expenses, and net savings. Includes visual spending charts and category breakdowns.
+- **Transaction Management**: Record income, expenses, and transfers. Support for recurring transactions (daily, weekly, monthly, yearly) and CSV export.
+- **Budgeting**: Create and track monthly budgets per category with visual progress indicators and alerts.
+- **Financial Goals**: Set savings targets with deadlines and track contributions over time.
+- **Calendar View**: Monthly visualization of financial activities to track daily spending and income patterns.
+- **Account Management**: Support for multiple account types including Checking, Savings, Credit Cards, Investments, and Cash.
+- **Category Customization**: Flexible category system for organizing income and expenses.
+- **Security**: Secure authentication and Row Level Security (RLS) ensuring data privacy.
+- **Responsive Design**: Fully responsive interface with Dark Mode support and Progressive Web App (PWA) capabilities for mobile installation.
 
 ## Tech Stack
 
 - **Frontend**: React 19, TypeScript, Vite
-- **Styling**: Tailwind CSS v4, Shadcn UI, Lucide Icons
-- **Backend**: Supabase
+- **Styling**: Tailwind CSS 4, Shadcn UI (Radix UI)
+- **State Management**: React Context API
+- **Routing**: React Router DOM 7
 - **Charts**: Recharts
-- **Runtime**: Bun
-- **Deployment**: Docker, Nginx
+- **Backend**: Supabase (PostgreSQL, Authentication)
+- **Icons**: Lucide React
+- **Internationalization**: Support for multiple currencies (USD, EUR, GBP, JPY, INR, etc.)
 
-## Getting Started
+## Prerequisites
 
-### Prerequisites
+Before running this project locally, ensure you have the following installed:
 
-- Bun (v1.0+)
-- Docker (optional, for containerization)
-- Supabase project
+- Node.js (Latest LTS version recommended)
+- npm or bun
+- A Supabase account
 
-### Local Development
+## Installation
 
-1. Clone the repository and install dependencies:
-   ```bash
-   git clone <repository-url>
-   cd personal-finance-tracker
-   bun install
-   ```
+1.  **Clone the repository**
 
-2. Set up environment variables:
-   ```bash
-   cp .env.example .env
-   ```
-   Configure your Supabase credentials in `.env`:
-   ```env
-   VITE_SUPABASE_URL=your_project_url
-   VITE_SUPABASE_ANON_KEY=your_anon_key
-   ```
+    ```bash
+    git clone <repository-url>
+    cd personal-finance-tracker
+    ```
 
-3. Initialize the database:
-   - Access your Supabase project's SQL Editor
-   - Execute the schema script in `supabase/database.sql`
+2.  **Install dependencies**
 
-4. Start the development server:
-   ```bash
-   bun run dev
-   ```
-   Access the application at `http://localhost:5173`
+    ```bash
+    npm install
+    ```
 
-### Docker Deployment
+3.  **Environment Setup**
 
-1. Build and run with Docker Compose:
-   ```bash
-   docker compose up --build -d
-   ```
+    Create a `.env` file in the root directory based on `.env.example`:
 
-2. Access the application at `http://localhost:8080`
+    ```bash
+    cp .env.example .env
+    ```
+
+    Update the following variables with your Supabase credentials:
+
+    ```env
+    VITE_SUPABASE_URL=your_supabase_project_url
+    VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+    ```
+
+4.  **Database Setup**
+
+    - Log in to your Supabase dashboard.
+    - Navigate to the SQL Editor.
+    - Copy the contents of `supabase/database.sql` and run it. This will set up all necessary tables, policies, and functions.
+    - (Optional) Use the `seed_my_data()` function within the application or via SQL to populate demo data.
+
+## Development
+
+To start the development server:
+
+```bash
+npm run dev
+```
+
+The application will be available at `http://localhost:5173`.
+
+## Build
+
+To build the application for production:
+
+```bash
+npm run build
+```
+
+To preview the production build:
+
+```bash
+npm run preview
+```
 
 ## Project Structure
 
-```
-src/
-├── components/     # Reusable UI components
-├── contexts/       # React contexts for state management
-├── hooks/          # Custom React hooks
-├── lib/            # Utility functions and configurations
-├── pages/          # Main application pages
-├── types/          # TypeScript type definitions
-└── App.tsx         # Main application component
-```
+- `src/components`: Reusable UI components and layout elements.
+- `src/contexts`: React Context providers (AuthContext).
+- `src/pages`: Main application views (Dashboard, Transactions, Budgets, etc.).
+- `src/lib`: Utility functions and Supabase client configuration.
+- `src/types`: TypeScript definitions and interfaces.
+- `supabase`: Database schemas and SQL scripts.
+
+## Database Schema
+
+The application uses a relational database structure with the following key tables:
+
+- **profiles**: User information and preferences (currency).
+- **accounts**: Financial accounts (bank, cash, etc.).
+- **categories**: Income and expense categories.
+- **transactions**: Financial records linked to accounts and categories.
+- **budgets**: Spending limits per category.
+- **goals**: Savings targets.
+
+All tables are protected by Row Level Security (RLS) policies, ensuring users can only access their own data.
