@@ -9,6 +9,7 @@ import {
     MoreHorizontal,
     Pencil,
     Trash2,
+    Repeat,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -69,6 +70,8 @@ export function Transactions() {
         category_id: '',
         account_id: '',
         date: format(new Date(), 'yyyy-MM-dd'),
+        is_recurring: false,
+        recurring_frequency: '' as '' | 'daily' | 'weekly' | 'monthly' | 'yearly',
     })
 
     useEffect(() => {
@@ -132,6 +135,8 @@ export function Transactions() {
                 category_id: formData.category_id || null,
                 account_id: formData.account_id,
                 date: formData.date,
+                is_recurring: formData.is_recurring,
+                recurring_frequency: formData.is_recurring ? formData.recurring_frequency || null : null,
             }
 
             if (editingTransaction) {
@@ -178,6 +183,8 @@ export function Transactions() {
             category_id: transaction.category_id || '',
             account_id: transaction.account_id,
             date: transaction.date,
+            is_recurring: transaction.is_recurring || false,
+            recurring_frequency: transaction.recurring_frequency || '',
         })
         setIsDialogOpen(true)
     }
@@ -191,6 +198,8 @@ export function Transactions() {
             category_id: '',
             account_id: accounts[0]?.id || '',
             date: format(new Date(), 'yyyy-MM-dd'),
+            is_recurring: false,
+            recurring_frequency: '',
         })
     }
 
@@ -319,7 +328,15 @@ export function Transactions() {
                                             </div>
                                         </TableCell>
                                         <TableCell className="font-medium">
-                                            {transaction.description || 'No description'}
+                                            <div className="flex items-center gap-2">
+                                                {transaction.description || 'No description'}
+                                                {transaction.is_recurring && (
+                                                    <Badge variant="outline" className="gap-1 text-xs">
+                                                        <Repeat className="h-3 w-3" />
+                                                        {transaction.recurring_frequency}
+                                                    </Badge>
+                                                )}
+                                            </div>
                                         </TableCell>
                                         <TableCell>
                                             {transaction.category ? (
@@ -477,6 +494,61 @@ export function Transactions() {
                                 onChange={(e) => setFormData({ ...formData, date: e.target.value })}
                                 required
                             />
+                        </div>
+
+                        {/* Recurring Transaction Section */}
+                        <div className="space-y-3 rounded-lg border border-border p-3">
+                            <div className="flex items-center justify-between">
+                                <div className="space-y-0.5">
+                                    <Label className="text-sm font-medium">Recurring Transaction</Label>
+                                    <p className="text-xs text-muted-foreground">
+                                        Automatically repeat this transaction
+                                    </p>
+                                </div>
+                                <button
+                                    type="button"
+                                    role="switch"
+                                    aria-checked={formData.is_recurring}
+                                    onClick={() => setFormData({
+                                        ...formData,
+                                        is_recurring: !formData.is_recurring,
+                                        recurring_frequency: !formData.is_recurring ? 'monthly' : ''
+                                    })}
+                                    className={cn(
+                                        "relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full transition-colors",
+                                        formData.is_recurring ? "bg-primary" : "bg-muted"
+                                    )}
+                                >
+                                    <span
+                                        className={cn(
+                                            "pointer-events-none block h-4 w-4 rounded-full bg-background shadow-sm transition-transform",
+                                            formData.is_recurring ? "translate-x-4" : "translate-x-0.5"
+                                        )}
+                                    />
+                                </button>
+                            </div>
+                            {formData.is_recurring && (
+                                <div className="space-y-2">
+                                    <Label>Frequency</Label>
+                                    <Select
+                                        value={formData.recurring_frequency}
+                                        onValueChange={(value: 'daily' | 'weekly' | 'monthly' | 'yearly') =>
+                                            setFormData({ ...formData, recurring_frequency: value })
+                                        }
+                                    >
+                                        <SelectTrigger>
+                                            <Repeat className="mr-2 h-4 w-4 text-muted-foreground" />
+                                            <SelectValue placeholder="Select frequency" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="daily">Daily</SelectItem>
+                                            <SelectItem value="weekly">Weekly</SelectItem>
+                                            <SelectItem value="monthly">Monthly</SelectItem>
+                                            <SelectItem value="yearly">Yearly</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                            )}
                         </div>
 
                         <DialogFooter>

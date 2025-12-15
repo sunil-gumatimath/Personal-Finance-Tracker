@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { User, Bell, Shield, Palette, LogOut } from 'lucide-react'
+import { User, Bell, Shield, Palette, LogOut, Moon, Sun, Monitor } from 'lucide-react'
+import { useTheme } from 'next-themes'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -18,6 +19,41 @@ import { toast } from 'sonner'
 import { useAuth } from '@/contexts/AuthContext'
 import { usePreferences } from '@/hooks/usePreferences'
 import { supabase } from '@/lib/supabase'
+import { cn } from '@/lib/utils'
+
+// Theme Selector Component
+function ThemeSelector() {
+    const { theme, setTheme } = useTheme()
+
+    const themes = [
+        { value: 'light', label: 'Light', icon: Sun },
+        { value: 'dark', label: 'Dark', icon: Moon },
+        { value: 'system', label: 'System', icon: Monitor },
+    ]
+
+    return (
+        <div className="grid grid-cols-3 gap-2">
+            {themes.map(({ value, label, icon: Icon }) => (
+                <button
+                    key={value}
+                    type="button"
+                    onClick={() => setTheme(value)}
+                    className={cn(
+                        'flex flex-col items-center gap-2 rounded-lg border-2 p-3 transition-all hover:bg-muted',
+                        theme === value
+                            ? 'border-primary bg-primary/5'
+                            : 'border-transparent bg-muted/50'
+                    )}
+                >
+                    <Icon className={cn('h-5 w-5', theme === value ? 'text-primary' : 'text-muted-foreground')} />
+                    <span className={cn('text-xs font-medium', theme === value ? 'text-primary' : 'text-muted-foreground')}>
+                        {label}
+                    </span>
+                </button>
+            ))}
+        </div>
+    )
+}
 
 export function Settings() {
     const { user, signOut } = useAuth()
@@ -138,6 +174,11 @@ export function Settings() {
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-4">
+                            <div className="space-y-2">
+                                <Label>Theme</Label>
+                                <ThemeSelector />
+                            </div>
+                            <Separator />
                             <div className="space-y-2">
                                 <Label>Currency</Label>
                                 <Select

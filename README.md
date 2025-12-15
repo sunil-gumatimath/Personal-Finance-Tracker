@@ -5,10 +5,13 @@ A modern personal finance tracker built with React, TypeScript, Vite, and Supaba
 ## Features
 
 - 📊 **Dashboard** - Overview with stats and charts
-- 💳 **Transactions** - Track income and expenses
+- 💳 **Transactions** - Track income and expenses with recurring transaction support
 - 🎯 **Budgets** - Set limits and track progress
-- 🏷️ **Categories** - Custom organization
-- 🔐 **Authentication** - Secure Supabase Auth
+- � **Goals** - Financial goals with progress tracking and milestones
+- �🏷️ **Categories** - Custom organization
+- � **Accounts** - Manage multiple accounts
+- �🔐 **Authentication** - Secure Supabase Auth
+- 🌓 **Dark Mode** - Light, dark, and system theme options
 
 ## Getting Started
 
@@ -33,3 +36,9 @@ A modern personal finance tracker built with React, TypeScript, Vite, and Supaba
    bun run dev
    ```
 
+## Tech Stack
+
+- **Frontend**: React 19, TypeScript, Vite
+- **Styling**: Tailwind CSS v4, Shadcn UI
+- **Backend**: Supabase (Auth, Database)
+- **Charts**: Recharts

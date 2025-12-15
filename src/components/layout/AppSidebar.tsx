@@ -5,6 +5,7 @@ import {
     PiggyBank,
     Tags,
     Wallet,
+    Target,
     Settings,
     LogOut,
     TrendingUp,
@@ -29,6 +30,7 @@ const navItems = [
     { title: 'Dashboard', icon: LayoutDashboard, path: '/' },
     { title: 'Transactions', icon: ArrowLeftRight, path: '/transactions' },
     { title: 'Budgets', icon: PiggyBank, path: '/budgets' },
+    { title: 'Goals', icon: Target, path: '/goals' },
     { title: 'Categories', icon: Tags, path: '/categories' },
     { title: 'Accounts', icon: Wallet, path: '/accounts' },
 ]

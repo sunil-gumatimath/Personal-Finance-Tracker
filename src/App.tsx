@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from '@/contexts/AuthContext'
+import { ThemeProvider } from '@/components/ui/theme-provider'
 import { MainLayout } from '@/components/layout'
 import {
   Dashboard,
@@ -7,6 +8,7 @@ import {
   Budgets,
   Categories,
   Accounts,
+  Goals,
   Settings,
   Login,
   Signup,
@@ -83,6 +85,7 @@ function AppRoutes() {
         <Route path="/" element={<Dashboard />} />
         <Route path="/transactions" element={<Transactions />} />
         <Route path="/budgets" element={<Budgets />} />
+        <Route path="/goals" element={<Goals />} />
         <Route path="/categories" element={<Categories />} />
         <Route path="/accounts" element={<Accounts />} />
         <Route path="/settings" element={<Settings />} />
@@ -97,12 +100,14 @@ function AppRoutes() {
 function App() {
   return (
     <BrowserRouter>
-      <AuthProvider>
-        <div className="min-h-screen bg-background text-foreground font-sans antialiased">
-          <AppRoutes />
-          <Toaster />
-        </div>
-      </AuthProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <div className="min-h-screen bg-background text-foreground font-sans antialiased">
+            <AppRoutes />
+            <Toaster />
+          </div>
+        </AuthProvider>
+      </ThemeProvider>
     </BrowserRouter>
   )
 }
