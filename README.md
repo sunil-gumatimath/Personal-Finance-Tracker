@@ -6,13 +6,17 @@ A comprehensive personal finance management application designed to help users t
 
 - **Dashboard**: Real-time overview of financial health including total balance, monthly income, expenses, and net savings. Includes visual spending charts and category breakdowns.
 - **Transaction Management**: Record income, expenses, and transfers. Support for recurring transactions (daily, weekly, monthly, yearly) and CSV export.
-- **Budgeting**: Create and track monthly budgets per category with visual progress indicators and alerts.
+- **Budgeting**: Create and track monthly budgets per category with visual progress indicators and alerts (Safe, Approaching Limit, Over Budget).
 - **Financial Goals**: Set savings targets with deadlines and track contributions over time.
 - **Calendar View**: Monthly visualization of financial activities to track daily spending and income patterns.
 - **Account Management**: Support for multiple account types including Checking, Savings, Credit Cards, Investments, and Cash.
+- **Customizable Settings**:
+  - **Themes**: Light, Dark, and System modes.
+  - **Internationalization**: Support for multiple currencies (USD, EUR, GBP, JPY, INR).
+  - **Preferences**: Custom date formats and notification settings (Email, Push, Budget Alerts).
 - **Category Customization**: Flexible category system for organizing income and expenses.
 - **Security**: Secure authentication and Row Level Security (RLS) ensuring data privacy.
-- **Responsive Design**: Fully responsive interface with Dark Mode support and Progressive Web App (PWA) capabilities for mobile installation.
+- **Mobile-First**: Fully responsive design with Progressive Web App (PWA) support for native-like mobile experience and offline access.
 
 ## Tech Stack
 
@@ -23,7 +27,7 @@ A comprehensive personal finance management application designed to help users t
 - **Charts**: Recharts
 - **Backend**: Supabase (PostgreSQL, Authentication)
 - **Icons**: Lucide React
-- **Internationalization**: Support for multiple currencies (USD, EUR, GBP, JPY, INR, etc.)
+- **PWA**: Vite PWA Plugin
 
 ## Prerequisites
 
@@ -107,7 +111,7 @@ npm run preview
 
 The application uses a relational database structure with the following key tables:
 
-- **profiles**: User information and preferences (currency).
+- **profiles**: User information and preferences.
 - **accounts**: Financial accounts (bank, cash, etc.).
 - **categories**: Income and expense categories.
 - **transactions**: Financial records linked to accounts and categories.
