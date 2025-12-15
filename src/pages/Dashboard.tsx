@@ -295,8 +295,8 @@ export function Dashboard() {
                 />
             </div>
 
-            {/* Charts Row */}
-            <div className="grid gap-4 lg:gap-6 grid-cols-1 lg:grid-cols-2">
+            {/* Charts Row - 70/30 Split */}
+            <div className="grid gap-4 lg:gap-6 grid-cols-1 lg:grid-cols-[7fr_3fr]">
                 <SpendingChart data={monthlyTrends} />
                 <BudgetOverview spendingByCategory={spendingByCategory} />
             </div>
