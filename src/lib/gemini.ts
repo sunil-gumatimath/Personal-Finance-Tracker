@@ -1,14 +1,13 @@
 import { GoogleGenerativeAI } from '@google/generative-ai'
 
-const DEFAULT_API_KEY = import.meta.env.VITE_GEMINI_API_KEY
 const DEFAULT_MODEL = 'gemini-3-flash-preview'
 
 export const generateFinancialAdvice = async (prompt: string, apiKey?: string, modelName?: string) => {
-    const key = apiKey || DEFAULT_API_KEY
+    const key = apiKey
     const modelId = modelName || DEFAULT_MODEL
 
     if (!key) {
-        console.warn('Gemini API Key is missing. Please provide it in Settings or environment variables.')
+        console.warn('Gemini API Key is missing. Please provide it in Settings.')
         return null
     }
 

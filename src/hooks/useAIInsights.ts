@@ -109,7 +109,7 @@ export function useAIInsights() {
             })
 
             // 2. Gemini-powered Personalized Coaching (only if API key available)
-            const hasApiKey = preferences.geminiApiKey || import.meta.env.VITE_GEMINI_API_KEY
+            const hasApiKey = !!preferences.geminiApiKey
 
             if (hasApiKey && typedTransactions.length > 0) {
                 const currentMonth = startOfMonth(new Date())

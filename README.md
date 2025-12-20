@@ -91,15 +91,14 @@ A premium, AI-powered personal finance management platform designed for clarity 
     ```bash
     VITE_SUPABASE_URL=your_supabase_project_url
     VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
-    VITE_GEMINI_API_KEY=your_gemini_api_key
     ```
 
-    **Getting Your Gemini API Key:**
+    **Adding Your Gemini API Key:**
     - Visit [Google AI Studio](https://aistudio.google.com/app/apikey)
     - Sign in with your Google account
     - Click "Create API Key" or "Get API Key"
-    - Copy the generated key and paste it in your `.env` file
-    - Alternatively, you can add it later in Settings > Preferences > AI Integration
+    - Copy the generated key
+    - Add it in Settings > Preferences > AI Integration within the application
 
 4. **Database Initialization**
 
@@ -131,7 +130,7 @@ The application includes powerful AI-driven insights powered by Google Gemini 3 
   - "Give me tips to save more money"
   - "Am I on track with my budget?"
 
-**Note:** AI features require a Gemini API key. Add it in Settings > Preferences > AI Integration or via the `.env` file.
+**Note:** AI features require a Gemini API key. Add it in Settings > Preferences > AI Integration.
 
 ## Docker Deployment
 

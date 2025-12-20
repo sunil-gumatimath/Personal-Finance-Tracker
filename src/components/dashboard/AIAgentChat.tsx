@@ -71,7 +71,7 @@ export function AIAgentChat() {
 
                 if (!isExpired && storedMessages.length > 0) {
                     // Filter out old API key error messages if key now exists
-                    const apiKey = getFreshApiKey() || import.meta.env.VITE_GEMINI_API_KEY
+                    const apiKey = getFreshApiKey()
                     const filteredMessages = apiKey
                         ? storedMessages.filter((m: Message) =>
                             !m.content.includes('Please add your Gemini API Key'))
@@ -143,7 +143,7 @@ export function AIAgentChat() {
         setMessages(prev => [...prev, newUserMessage])
 
         // Get fresh API key from localStorage to avoid stale state issues
-        const apiKey = getFreshApiKey() || import.meta.env.VITE_GEMINI_API_KEY
+        const apiKey = getFreshApiKey()
         const currency = getFreshCurrency()
 
         if (!apiKey) {
