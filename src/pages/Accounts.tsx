@@ -7,7 +7,6 @@ import {
     Building,
     Pencil,
     Trash2,
-    MoreHorizontal,
     TrendingUp,
     TrendingDown,
     ArrowUpRight,
@@ -16,7 +15,10 @@ import {
     LineChart,
     Eye,
     EyeOff,
-    Sparkles
+    Sparkles,
+    Search,
+    Filter,
+    ArrowUpDown
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -29,12 +31,16 @@ import {
     DialogFooter,
 } from '@/components/ui/dialog'
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-    DropdownMenuSeparator,
-} from '@/components/ui/dropdown-menu'
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
+
 import {
     Select,
     SelectContent,
@@ -78,6 +84,8 @@ const COLORS = [
 
 
 
+type SortOption = 'name' | 'balance' | 'type' | 'created'
+
 export function Accounts() {
     const { user } = useAuth()
     const { formatCurrency, preferences } = usePreferences()
@@ -86,6 +94,18 @@ export function Accounts() {
     const [isDialogOpen, setIsDialogOpen] = useState(false)
     const [editingAccount, setEditingAccount] = useState<Account | null>(null)
     const [showBalances, setShowBalances] = useState(true)
+
+    // Search and filter state
+    const [searchQuery, setSearchQuery] = useState('')
+    const [filterType, setFilterType] = useState<string>('all')
+    const [sortBy, setSortBy] = useState<SortOption>('name')
+
+    // Delete confirmation state
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+    const [accountToDelete, setAccountToDelete] = useState<Account | null>(null)
+    const [linkedTransactionsCount, setLinkedTransactionsCount] = useState(0)
+    const [isDeleting, setIsDeleting] = useState(false)
+
     const [formData, setFormData] = useState({
         name: '',
         type: 'checking' as Account['type'],
@@ -166,15 +186,55 @@ export function Accounts() {
         }
     }
 
-    const handleDelete = async (id: string) => {
+    // Initiate delete - check for linked transactions first
+    const initiateDelete = async (account: Account) => {
+        setAccountToDelete(account)
+
         try {
-            const { error } = await supabase.from('accounts').delete().eq('id', id)
+            const { count } = await supabase
+                .from('transactions')
+                .select('*', { count: 'exact', head: true })
+                .eq('account_id', account.id)
+
+            setLinkedTransactionsCount(count || 0)
+        } catch (error) {
+            console.error('Error checking transactions:', error)
+            setLinkedTransactionsCount(0)
+        }
+
+        setDeleteDialogOpen(true)
+    }
+
+    // Confirm and execute delete
+    const handleDelete = async () => {
+        if (!accountToDelete) return
+
+        setIsDeleting(true)
+        try {
+            // If there are linked transactions, we need to handle them
+            if (linkedTransactionsCount > 0) {
+                // Delete associated transactions first
+                const { error: txError } = await supabase
+                    .from('transactions')
+                    .delete()
+                    .eq('account_id', accountToDelete.id)
+
+                if (txError) throw txError
+            }
+
+            const { error } = await supabase.from('accounts').delete().eq('id', accountToDelete.id)
             if (error) throw error
-            toast.success('Account deleted')
+
+            toast.success(`"${accountToDelete.name}" deleted successfully`)
             fetchAccounts()
         } catch (error) {
             console.error('Error deleting account:', error)
-            toast.error('Failed to delete account. It may have transactions.')
+            toast.error('Failed to delete account. Please try again.')
+        } finally {
+            setIsDeleting(false)
+            setDeleteDialogOpen(false)
+            setAccountToDelete(null)
+            setLinkedTransactionsCount(0)
         }
     }
 
@@ -189,11 +249,33 @@ export function Accounts() {
         })
     }
 
-    const activeAccounts = accounts.filter((a) => a.is_active)
-    const inactiveAccounts = accounts.filter((a) => !a.is_active)
-    const totalBalance = activeAccounts.reduce((sum, a) => sum + a.balance, 0)
-    const totalAssets = activeAccounts.filter(a => a.balance > 0).reduce((sum, a) => sum + a.balance, 0)
-    const totalLiabilities = Math.abs(activeAccounts.filter(a => a.balance < 0).reduce((sum, a) => sum + a.balance, 0))
+    // Filter and sort accounts
+    const filteredAccounts = accounts.filter((account) => {
+        const matchesSearch = account.name.toLowerCase().includes(searchQuery.toLowerCase())
+        const matchesType = filterType === 'all' || account.type === filterType
+        return matchesSearch && matchesType
+    })
+
+    const sortedAccounts = [...filteredAccounts].sort((a, b) => {
+        switch (sortBy) {
+            case 'name':
+                return a.name.localeCompare(b.name)
+            case 'balance':
+                return b.balance - a.balance
+            case 'type':
+                return a.type.localeCompare(b.type)
+            case 'created':
+                return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+            default:
+                return 0
+        }
+    })
+
+    const activeAccounts = sortedAccounts.filter((a) => a.is_active)
+    const inactiveAccounts = sortedAccounts.filter((a) => !a.is_active)
+    const totalBalance = accounts.filter((a) => a.is_active).reduce((sum, a) => sum + a.balance, 0)
+    const totalAssets = accounts.filter(a => a.is_active && a.balance > 0).reduce((sum, a) => sum + a.balance, 0)
+    const totalLiabilities = Math.abs(accounts.filter(a => a.is_active && a.balance < 0).reduce((sum, a) => sum + a.balance, 0))
 
     if (loading) {
         return <LoadingSkeleton />
@@ -201,39 +283,33 @@ export function Accounts() {
 
     return (
         <div className="space-y-8 animate-in fade-in duration-700">
-            {/* Header Section */}
-            <div className="flex flex-col gap-6">
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                    <div className="space-y-1">
-                        <div className="flex items-center gap-3">
-                            <div>
-                                <h1 className="text-3xl font-black tracking-tight tracking-tighter sm:text-4xl">Accounts</h1>
-                                <p className="text-sm font-medium text-muted-foreground">
-                                    Manage your unified financial portfolio
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="flex items-center gap-3">
-                        <Button
-                            variant="outline"
-                            size="icon"
-                            onClick={() => setShowBalances(!showBalances)}
-                            className="h-11 w-11 rounded-xl bg-background/50 backdrop-blur-sm border-border/50"
-                        >
-                            {showBalances ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
-                        </Button>
-                        <Button
-                            onClick={() => {
-                                resetForm()
-                                setIsDialogOpen(true)
-                            }}
-                            className="h-11 rounded-xl px-6 gap-2 bg-primary shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all font-bold"
-                        >
-                            <Plus className="h-4 w-4" />
-                            Add Account
-                        </Button>
-                    </div>
+            {/* Header with Quick Actions */}
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                    <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Accounts</h1>
+                    <p className="text-sm sm:text-base text-muted-foreground">
+                        Manage your financial accounts
+                    </p>
+                </div>
+                <div className="flex items-center gap-2">
+                    <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={() => setShowBalances(!showBalances)}
+                        aria-label={showBalances ? 'Hide balances' : 'Show balances'}
+                    >
+                        {showBalances ? <Eye className="h-5 w-5" /> : <EyeOff className="h-5 w-5" />}
+                    </Button>
+                    <Button
+                        onClick={() => {
+                            resetForm()
+                            setIsDialogOpen(true)
+                        }}
+                        className="w-full sm:w-auto"
+                    >
+                        <Plus className="mr-2 h-4 w-4" />
+                        Add Account
+                    </Button>
                 </div>
             </div>
 
@@ -270,7 +346,7 @@ export function Accounts() {
                                         DEFICIT
                                     </Badge>
                                 )}
-                                <span className="text-xs font-medium text-muted-foreground">Total across all active units</span>
+                                <span className="text-xs font-medium text-muted-foreground">Combined balance of active accounts</span>
                             </div>
                         </div>
                     </CardContent>
@@ -311,6 +387,71 @@ export function Accounts() {
                 </Card>
             </div>
 
+            {/* Search, Filter & Sort Bar */}
+            {accounts.length > 0 && (
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between p-4 rounded-xl bg-card/30 backdrop-blur-sm border border-border/50">
+                    <div className="relative flex-1 max-w-md">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Input
+                            placeholder="Search accounts..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="pl-10 h-10 bg-background/50 border-border/50 rounded-lg"
+                            aria-label="Search accounts by name"
+                        />
+                    </div>
+                    <div className="flex items-center gap-3">
+                        <Select value={filterType} onValueChange={setFilterType}>
+                            <SelectTrigger className="w-[150px] h-10 bg-background/50 border-border/50 rounded-lg" aria-label="Filter by account type">
+                                <Filter className="h-4 w-4 mr-2 text-muted-foreground" />
+                                <SelectValue placeholder="All Types" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="all">All Types</SelectItem>
+                                {ACCOUNT_TYPES.map((type) => (
+                                    <SelectItem key={type.value} value={type.value}>
+                                        {type.label}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                        <Select value={sortBy} onValueChange={(value: SortOption) => setSortBy(value)}>
+                            <SelectTrigger className="w-[140px] h-10 bg-background/50 border-border/50 rounded-lg" aria-label="Sort accounts">
+                                <ArrowUpDown className="h-4 w-4 mr-2 text-muted-foreground" />
+                                <SelectValue placeholder="Sort by" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="name">Name</SelectItem>
+                                <SelectItem value="balance">Balance</SelectItem>
+                                <SelectItem value="type">Type</SelectItem>
+                                <SelectItem value="created">Newest</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                </div>
+            )}
+
+            {/* No Results State */}
+            {accounts.length > 0 && filteredAccounts.length === 0 && (
+                <div className="flex flex-col items-center justify-center py-16 text-center">
+                    <Search className="h-12 w-12 text-muted-foreground/50 mb-4" />
+                    <h3 className="text-lg font-semibold text-muted-foreground">No accounts found</h3>
+                    <p className="text-sm text-muted-foreground/70 mt-1">
+                        Try adjusting your search or filter criteria
+                    </p>
+                    <Button
+                        variant="outline"
+                        onClick={() => {
+                            setSearchQuery('')
+                            setFilterType('all')
+                        }}
+                        className="mt-4"
+                    >
+                        Clear Filters
+                    </Button>
+                </div>
+            )}
+
             {/* Active Accounts Section */}
             {activeAccounts.length > 0 && (
                 <div className="space-y-6">
@@ -339,14 +480,12 @@ export function Accounts() {
                                             >
                                                 <Icon className="h-6 w-6" style={{ color }} />
                                             </div>
-                                            <DropdownMenu>
-                                                <DropdownMenuTrigger asChild>
-                                                    <Button variant="ghost" size="icon" className="h-9 w-9 opacity-50 hover:opacity-100 rounded-lg">
-                                                        <MoreHorizontal className="h-4 w-4" />
-                                                    </Button>
-                                                </DropdownMenuTrigger>
-                                                <DropdownMenuContent align="end" className="w-48 rounded-xl ring-1 ring-border border-0 shadow-2xl">
-                                                    <DropdownMenuItem onClick={() => {
+                                            <div className="flex items-center gap-1">
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="h-8 w-8 opacity-60 hover:opacity-100 rounded-lg hover:bg-secondary"
+                                                    onClick={() => {
                                                         setEditingAccount(account)
                                                         setFormData({
                                                             name: account.name,
@@ -356,18 +495,21 @@ export function Accounts() {
                                                             is_active: account.is_active,
                                                         })
                                                         setIsDialogOpen(true)
-                                                    }}>
-                                                        <Pencil className="mr-2 h-4 w-4 opacity-70" /> Edit Details
-                                                    </DropdownMenuItem>
-                                                    <DropdownMenuSeparator />
-                                                    <DropdownMenuItem
-                                                        className="text-rose-500 focus:text-rose-500"
-                                                        onClick={() => handleDelete(account.id)}
-                                                    >
-                                                        <Trash2 className="mr-2 h-4 w-4" /> Delete Account
-                                                    </DropdownMenuItem>
-                                                </DropdownMenuContent>
-                                            </DropdownMenu>
+                                                    }}
+                                                    title="Edit account"
+                                                >
+                                                    <Pencil className="h-4 w-4" />
+                                                </Button>
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="h-8 w-8 opacity-60 hover:opacity-100 rounded-lg text-rose-500 hover:text-rose-600 hover:bg-rose-500/10"
+                                                    onClick={() => initiateDelete(account)}
+                                                    title="Delete account"
+                                                >
+                                                    <Trash2 className="h-4 w-4" />
+                                                </Button>
+                                            </div>
                                         </div>
                                     </CardHeader>
 
@@ -420,14 +562,12 @@ export function Accounts() {
                                             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted/50 border border-border/50">
                                                 <Icon className="h-5 w-5 text-muted-foreground" />
                                             </div>
-                                            <DropdownMenu>
-                                                <DropdownMenuTrigger asChild>
-                                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground">
-                                                        <MoreHorizontal className="h-4 w-4" />
-                                                    </Button>
-                                                </DropdownMenuTrigger>
-                                                <DropdownMenuContent align="end" className="w-48 rounded-xl">
-                                                    <DropdownMenuItem onClick={() => {
+                                            <div className="flex items-center gap-1">
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-secondary rounded-lg"
+                                                    onClick={() => {
                                                         setEditingAccount(account)
                                                         setFormData({
                                                             name: account.name,
@@ -437,18 +577,21 @@ export function Accounts() {
                                                             is_active: account.is_active,
                                                         })
                                                         setIsDialogOpen(true)
-                                                    }}>
-                                                        <Pencil className="mr-2 h-4 w-4" /> Edit Account
-                                                    </DropdownMenuItem>
-                                                    <DropdownMenuSeparator />
-                                                    <DropdownMenuItem
-                                                        className="text-destructive"
-                                                        onClick={() => handleDelete(account.id)}
-                                                    >
-                                                        <Trash2 className="mr-2 h-4 w-4" /> Delete Account
-                                                    </DropdownMenuItem>
-                                                </DropdownMenuContent>
-                                            </DropdownMenu>
+                                                    }}
+                                                    title="Edit account"
+                                                >
+                                                    <Pencil className="h-4 w-4" />
+                                                </Button>
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="h-8 w-8 text-muted-foreground hover:text-rose-500 hover:bg-rose-500/10 rounded-lg"
+                                                    onClick={() => initiateDelete(account)}
+                                                    title="Delete account"
+                                                >
+                                                    <Trash2 className="h-4 w-4" />
+                                                </Button>
+                                            </div>
                                         </div>
                                     </CardHeader>
                                     <CardContent className="space-y-4 pt-4">
@@ -479,9 +622,9 @@ export function Accounts() {
                                 <Wallet className="h-10 w-10" />
                             </div>
                         </div>
-                        <h3 className="text-2xl font-black tracking-tight mb-2">Build your portfolio</h3>
+                        <h3 className="text-2xl font-black tracking-tight mb-2">Get Started</h3>
                         <p className="text-muted-foreground max-w-sm mb-10 font-medium">
-                            Synthesize your finances by adding your first account. Connect banks, wallets, or crypto.
+                            Add your first account to start tracking your finances across banks, cards, and more.
                         </p>
                         <Button
                             onClick={() => {
@@ -491,7 +634,7 @@ export function Accounts() {
                             className="h-12 px-10 rounded-2xl gap-2 bg-primary shadow-xl shadow-primary/20 font-black tracking-wide"
                         >
                             <Plus className="h-5 w-5" />
-                            DEPLOY NEW ACCOUNT
+                            Create Account
                         </Button>
                     </CardContent>
                 </Card>
@@ -509,7 +652,7 @@ export function Accounts() {
                         <Plus className="h-6 w-6 text-muted-foreground group-hover:text-primary transition-colors" />
                     </div>
                     <span className="font-black text-muted-foreground group-hover:text-foreground transition-colors uppercase tracking-[0.2em] text-xs">
-                        Add Another Financial Unit
+                        Add New Account
                     </span>
                 </button>
             )}
@@ -609,6 +752,8 @@ export function Accounts() {
                                             style={{ backgroundColor: color.value }}
                                             onClick={() => setFormData({ ...formData, color: color.value })}
                                             title={color.name}
+                                            aria-label={`Select ${color.name} color`}
+                                            aria-pressed={formData.color === color.value}
                                         />
                                     ))}
                                 </div>
@@ -631,7 +776,7 @@ export function Accounts() {
                             </div>
                         </div>
 
-                        <DialogFooter className="gap-2 sm:gap-0">
+                        <DialogFooter className="gap-2 sm:gap-2">
                             <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
                                 Cancel
                             </Button>
@@ -642,6 +787,43 @@ export function Accounts() {
                     </form>
                 </DialogContent>
             </Dialog>
+
+            {/* Delete Confirmation Dialog */}
+            <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+                <AlertDialogContent className="sm:max-w-[425px]">
+                    <AlertDialogHeader>
+                        <AlertDialogTitle className="flex items-center gap-2 text-destructive">
+                            <Trash2 className="h-5 w-5" />
+                            Delete Account
+                        </AlertDialogTitle>
+                        <AlertDialogDescription className="space-y-3">
+                            <span className="block">
+                                Are you sure you want to delete <strong>"{accountToDelete?.name}"</strong>?
+                            </span>
+                            {linkedTransactionsCount > 0 && (
+                                <span className="block p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-sm font-medium">
+                                    Warning: This account has {linkedTransactionsCount} linked transaction{linkedTransactionsCount !== 1 ? 's' : ''} that will also be deleted.
+                                </span>
+                            )}
+                            <span className="block text-xs text-muted-foreground">
+                                This action cannot be undone.
+                            </span>
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter className="gap-2 sm:gap-2">
+                        <AlertDialogCancel disabled={isDeleting}>
+                            Cancel
+                        </AlertDialogCancel>
+                        <AlertDialogAction
+                            onClick={handleDelete}
+                            disabled={isDeleting}
+                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                        >
+                            {isDeleting ? 'Deleting...' : 'Delete Account'}
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
     )
 }

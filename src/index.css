@@ -61,6 +61,11 @@
   }
 }
 
+/* Fix for Radix Dropdown Menu positioning */
+[data-radix-popper-content-wrapper] {
+  z-index: 100 !important;
+}
+
 :root {
   --radius: 0.625rem;
   /* Eye Protection Light Mode (Warm Ivory) */
